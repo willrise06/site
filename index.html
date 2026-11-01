@@ -1,0 +1,1882 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VICTORIA — тихая роскошь из Новосибирска</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #f3f1ec;
+      --ink: #141414;
+      --muted: #6f6c66;
+      --line: rgba(255,255,255,0.45);
+      --paper: rgba(255, 255, 255, 0.55);
+      --glass-bg: rgba(255, 255, 255, 0.42);
+      --glass-border: rgba(255, 255, 255, 0.6);
+      --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.10);
+      --glass-blur: 22px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      color: var(--ink);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      position: relative;
+      min-height: 100vh;
+    }
+
+    /* ---------- глобальный фоновый слой ---------- */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(ellipse 60% 50% at 15% 10%, #e8dccf 0%, transparent 60%),
+        radial-gradient(ellipse 50% 60% at 85% 20%, #dfd6c8 0%, transparent 60%),
+        radial-gradient(ellipse 55% 50% at 30% 80%, #ece4d8 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 75% 90%, #e3ddd2 0%, transparent 60%),
+        linear-gradient(135deg, #f7f5f1 0%, #eeebe5 100%);
+      pointer-events: none;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(rgba(0,0,0,0.012) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.012) 1px, transparent 1px);
+      background-size: 64px 64px;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    /* ---------- стеклянная утилита ---------- */
+    .glass {
+      background: var(--glass-bg);
+      -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+      backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .glass::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.95), transparent);
+      pointer-events: none;
+    }
+
+    /* ---------- шапка ---------- */
+    .header {
+      position: fixed;
+      top: 12px; left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 32px);
+      max-width: 1400px;
+      z-index: 100;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.5);
+      -webkit-backdrop-filter: blur(22px) saturate(180%);
+      backdrop-filter: blur(22px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.08);
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.95), transparent);
+      border-radius: 20px 20px 0 0;
+    }
+    .header-inner {
+      padding: 16px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 26px;
+      letter-spacing: 0.18em;
+      color: var(--ink);
+      text-decoration: none;
+      cursor: pointer;
+      z-index: 10;
+    }
+    .nav { display: flex; gap: 8px; }
+    .nav a {
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #3a3a3a;
+      text-decoration: none;
+      cursor: pointer;
+      padding: 10px 18px;
+      border-radius: 12px;
+      transition: background 0.3s, color 0.3s;
+    }
+    .nav a:hover { background: rgba(255,255,255,0.55); color: var(--ink); }
+    .nav a.active {
+      background: rgba(255,255,255,0.8);
+      color: var(--ink);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .cart {
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      color: #3a3a3a;
+      padding: 10px 18px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.4);
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+
+    /* ---------- страницы ---------- */
+    .page { display: none; opacity: 0; }
+    .page.active {
+      display: block;
+      animation: pageFade 0.6s ease forwards;
+    }
+    @keyframes pageFade {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---------- hero ---------- */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 160px 24px 100px;
+      position: relative;
+      overflow: hidden;
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    .orb-1 {
+      width: 520px; height: 520px;
+      background: radial-gradient(circle, #e8dccf 0%, transparent 70%);
+      top: -10%; left: -8%;
+      animation: float1 18s ease-in-out infinite;
+    }
+    .orb-2 {
+      width: 480px; height: 480px;
+      background: radial-gradient(circle, #dfd6c8 0%, transparent 70%);
+      bottom: -15%; right: -6%;
+      animation: float2 22s ease-in-out infinite;
+    }
+    .orb-3 {
+      width: 340px; height: 340px;
+      background: radial-gradient(circle, #ece4d8 0%, transparent 70%);
+      top: 40%; right: 20%;
+      animation: float3 16s ease-in-out infinite;
+    }
+    @keyframes float1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(60px, 40px) scale(1.08); }
+    }
+    @keyframes float2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-50px, -50px) scale(1.06); }
+    }
+    @keyframes float3 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(30px, -40px) scale(0.94); }
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+      padding: 64px 48px;
+      border-radius: 32px;
+      background: rgba(255, 255, 255, 0.32);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      backdrop-filter: blur(24px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 20px 60px rgba(31, 38, 135, 0.10);
+    }
+    .hero-content::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.95), transparent);
+      border-radius: 32px 32px 0 0;
+    }
+    .hero-sub {
+      font-size: 13px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: riseUp 1s 0.2s ease forwards;
+    }
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: clamp(48px, 9vw, 92px);
+      line-height: 1.08;
+      color: var(--ink);
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: riseUp 1.1s 0.4s ease forwards;
+    }
+    .hero p {
+      font-size: 18px;
+      font-weight: 300;
+      color: #4a4844;
+      max-width: 560px;
+      margin: 0 auto 44px;
+      line-height: 1.7;
+      opacity: 0;
+      animation: riseUp 1.1s 0.6s ease forwards;
+    }
+    .hero .btn-wrap {
+      opacity: 0;
+      animation: riseUp 1.1s 0.8s ease forwards;
+    }
+    @keyframes riseUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---------- кнопки ---------- */
+    .btn {
+      display: inline-block;
+      padding: 18px 52px;
+      font-size: 13px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: #ffffff;
+      background-color: var(--ink);
+      border: 1px solid var(--ink);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 8px 24px -8px rgba(20,20,20,0.4);
+    }
+    .btn:hover {
+      background-color: transparent;
+      color: var(--ink);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px -8px rgba(20,20,20,0.25);
+    }
+
+    /* ---------- секции ---------- */
+    .section { max-width: 1440px; margin: 0 auto; padding: 100px 48px; }
+    .section-label {
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 46px;
+      text-align: center;
+      color: var(--ink);
+      margin-bottom: 64px;
+    }
+    .section-intro {
+      max-width: 680px;
+      margin: -40px auto 72px;
+      text-align: center;
+      font-size: 17px;
+      line-height: 1.8;
+      color: #4a4844;
+    }
+
+    /* ---------- сетка товаров ---------- */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 28px;
+    }
+    .card {
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.5);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
+      backdrop-filter: blur(18px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.08);
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow 0.4s, transform 0.4s, background 0.4s;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.95), transparent);
+      z-index: 2;
+    }
+    .card:hover {
+      box-shadow: 0 24px 60px -14px rgba(31, 38, 135, 0.18);
+      transform: translateY(-6px);
+      background: rgba(255, 255, 255, 0.62);
+    }
+    .card-image {
+      aspect-ratio: 3 / 4;
+      overflow: hidden;
+      background-color: #f2f0ed;
+      position: relative;
+      margin: 8px 8px 0;
+      border-radius: 16px;
+    }
+    .card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.7s cubic-bezier(.2,.8,.2,1);
+    }
+    .card:hover .card-image img { transform: scale(1.06); }
+    .swatch {
+      position: absolute;
+      top: 12px; left: 12px;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.9);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      z-index: 2;
+    }
+    .card-body { padding: 20px 22px 24px; }
+    .card-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 21px;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .card-desc { font-size: 13px; font-weight: 300; color: var(--muted); margin-bottom: 14px; }
+    .card-price { font-size: 15px; font-weight: 400; color: #2a2a2a; }
+
+    /* ---------- reveal ---------- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity 0.9s cubic-bezier(.2,.8,.2,1), transform 0.9s cubic-bezier(.2,.8,.2,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ---------- манифест ---------- */
+    .manifesto { max-width: 1200px; margin: 0 auto; padding: 0 48px; }
+    .manifesto-inner {
+      padding: 88px 64px;
+      border-radius: 32px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.45);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      backdrop-filter: blur(24px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      box-shadow: 0 16px 48px rgba(31, 38, 135, 0.10);
+      position: relative;
+      overflow: hidden;
+    }
+    .manifesto-inner::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.95), transparent);
+    }
+    .manifesto h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.25;
+      color: var(--ink);
+      margin-bottom: 28px;
+    }
+    .manifesto p {
+      font-size: 16px;
+      color: #4a4844;
+      line-height: 1.85;
+      margin-bottom: 18px;
+      max-width: 760px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .manifesto p:last-child { margin-bottom: 0; }
+
+    /* ---------- редакционный блок ---------- */
+    .editorial { max-width: 1440px; margin: 0 auto; padding: 60px 48px; }
+    .editorial-glass {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 64px;
+      padding: 72px 64px;
+      border-radius: 32px;
+      background: rgba(255, 255, 255, 0.42);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      backdrop-filter: blur(24px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      box-shadow: 0 16px 48px rgba(31, 38, 135, 0.10);
+      position: relative;
+      overflow: hidden;
+    }
+    .editorial-glass::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.95), transparent);
+    }
+    .editorial-left h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: clamp(32px, 3.6vw, 44px);
+      line-height: 1.15;
+      color: var(--ink);
+      margin-bottom: 24px;
+    }
+    .editorial-left .lead {
+      font-size: 17px;
+      line-height: 1.8;
+      color: #2f2d2a;
+      margin-bottom: 20px;
+    }
+    .editorial-left .small {
+      font-size: 15px;
+      line-height: 1.8;
+      color: #4a4844;
+    }
+    .editorial-right p {
+      font-size: 15px;
+      line-height: 1.85;
+      color: #3a3835;
+      margin-bottom: 20px;
+    }
+    .editorial-right p:last-child { margin-bottom: 0; }
+    .editorial-right .divider {
+      width: 56px;
+      height: 1px;
+      background: rgba(180,175,165,0.6);
+      margin: 8px 0 24px;
+    }
+
+    /* ---------- цифры ---------- */
+    .stats { max-width: 1440px; margin: 0 auto; padding: 60px 48px; }
+    .stats-inner {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    .stat {
+      padding: 40px 24px;
+      border-radius: 22px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.45);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      backdrop-filter: blur(20px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .stat::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.95), transparent);
+    }
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 52px;
+      line-height: 1;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+    .stat-label { font-size: 13px; line-height: 1.6; color: var(--muted); letter-spacing: 0.02em; }
+
+    /* ---------- СЛАЙДЕР ---------- */
+    .story { max-width: 1440px; margin: 60px auto; padding: 0 48px; }
+    .story-card {
+      border-radius: 32px;
+      padding: 64px 0 56px;
+      background: rgba(255, 255, 255, 0.42);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      backdrop-filter: blur(24px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      box-shadow: 0 16px 48px rgba(31, 38, 135, 0.10);
+      position: relative;
+      overflow: hidden;
+    }
+    .story-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.95), transparent);
+    }
+    .story-head {
+      margin: 0 auto 48px;
+      padding: 0 56px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .story-head .section-label { text-align: left; }
+    .story-head h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 42px;
+      line-height: 1.15;
+      color: var(--ink);
+      max-width: 700px;
+    }
+    .slider-controls { display: flex; gap: 10px; }
+    .slider-btn {
+      width: 50px; height: 50px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.5);
+      -webkit-backdrop-filter: blur(14px) saturate(160%);
+      backdrop-filter: blur(14px) saturate(160%);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+      color: var(--ink);
+      box-shadow: 0 4px 16px rgba(31, 38, 135, 0.08);
+    }
+    .slider-btn:hover {
+      background: rgba(255, 255, 255, 0.85);
+      transform: scale(1.05);
+      box-shadow: 0 8px 24px rgba(31, 38, 135, 0.14);
+    }
+    .slider-btn svg { width: 18px; height: 18px; }
+
+    .slider-track-wrap {
+      overflow: hidden;
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: pan-y;
+    }
+    .slider-track-wrap:active { cursor: grabbing; }
+    .slider-track {
+      display: flex;
+      gap: 28px;
+      padding: 0 56px;
+      transition: transform 0.7s cubic-bezier(.22,.8,.24,1);
+      will-change: transform;
+    }
+    .slider-track.no-transition { transition: none; }
+    .slide {
+      flex: 0 0 calc(33.333% - 18.67px);
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.5);
+      -webkit-backdrop-filter: blur(16px) saturate(160%);
+      backdrop-filter: blur(16px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 6px 24px rgba(31, 38, 135, 0.06);
+      transition: box-shadow 0.4s, transform 0.4s;
+    }
+    .slide:hover {
+      box-shadow: 0 16px 40px -8px rgba(31, 38, 135, 0.15);
+      transform: translateY(-4px);
+    }
+    .slide-image {
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      background: #f2f0ed;
+      margin-bottom: 22px;
+      border-radius: 14px;
+    }
+    .slide-image img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.8s cubic-bezier(.2,.8,.2,1);
+    }
+    .slide:hover .slide-image img { transform: scale(1.05); }
+    .slide-content { padding: 0 12px 12px; }
+    .slide-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      margin-bottom: 10px;
+    }
+    .slide h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 24px;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+    .slide p { font-size: 14px; line-height: 1.75; color: #4a4844; }
+    .slider-dots {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 44px;
+      padding: 0 56px;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(140,135,125,0.3);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .dot.active { background: var(--ink); transform: scale(1.3); }
+
+    /* ---------- каталог ---------- */
+    .catalog-head {
+      padding: 160px 48px 40px;
+      text-align: center;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+    .catalog-head h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: clamp(40px, 6vw, 72px);
+      margin-bottom: 18px;
+    }
+    .catalog-head p {
+      font-size: 17px;
+      color: #4a4844;
+      max-width: 620px;
+      margin: 0 auto;
+      line-height: 1.8;
+    }
+
+    /* ---------- о бренде ---------- */
+    .about-hero { padding: 170px 48px 60px; max-width: 1100px; margin: 0 auto; }
+    .about-hero-glass {
+      padding: 56px 56px;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.45);
+      -webkit-backdrop-filter: blur(22px) saturate(160%);
+      backdrop-filter: blur(22px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      box-shadow: 0 12px 40px rgba(31, 38, 135, 0.09);
+      position: relative;
+      overflow: hidden;
+    }
+    .about-hero-glass::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.95), transparent);
+    }
+    .about-hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: clamp(44px, 7vw, 76px);
+      line-height: 1.1;
+      margin-bottom: 28px;
+    }
+    .about-hero .lead {
+      font-size: 19px;
+      line-height: 1.75;
+      color: #2f2d2a;
+      max-width: 720px;
+      margin-bottom: 20px;
+    }
+    .about-hero p {
+      font-size: 16px;
+      line-height: 1.85;
+      color: #4a4844;
+      max-width: 720px;
+      margin-bottom: 16px;
+    }
+    .about-hero p:last-child { margin-bottom: 0; }
+
+    .about-columns {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 48px 60px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .about-col {
+      padding: 36px 32px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.45);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      backdrop-filter: blur(20px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .about-col::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.95), transparent);
+    }
+    .about-col h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 23px;
+      margin-bottom: 12px;
+    }
+    .about-col p {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #4a4844;
+      margin-bottom: 12px;
+    }
+    .about-col p:last-child { margin-bottom: 0; }
+
+    /* ============================================================
+       ХРОНИКА ПОВЕРХ ФОТО — liquid glass + список с ползунком
+       ============================================================ */
+    .about-photo-timeline {
+      width: 100vw;
+      position: relative;
+      left: 50%;
+      margin-left: -50vw;
+      margin-top: 20px;
+      margin-bottom: 0;
+      padding: 100px 48px;
+      background-image: url('https://moyaodejda.ru/wp-content/uploads/2025/10/image-176-2.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      overflow: hidden;
+    }
+    .about-photo-timeline::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(20,20,20,0.05) 0%, rgba(20,20,20,0.15) 50%, rgba(20,20,20,0.2) 100%);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .timeline-glass {
+      position: relative;
+      z-index: 2;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 56px 56px 48px;
+      border-radius: 32px;
+      background: rgba(255, 255, 255, 0.45); /* Чуть плотнее стекло для контраста */
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255,255,255,0.6);
+      overflow: hidden;
+    }
+    .timeline-glass::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,1), transparent);
+    }
+    .timeline-glass::after {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 240px; height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.45), transparent 70%);
+      pointer-events: none;
+      filter: blur(20px);
+    }
+    
+    .timeline-glass h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 42px;
+      text-align: center;
+      margin-bottom: 18px;
+      color: #141414; /* Темный заголовок */
+    }
+    .timeline-glass .timeline-intro {
+      max-width: 620px;
+      margin: 0 auto 40px;
+      text-align: center;
+      font-size: 16px;
+      line-height: 1.8;
+      color: #2f2d2a; /* Темный текст */
+    }
+
+    .timeline-scroll-wrap {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 6px;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .timeline-list {
+      list-style: none;
+      max-height: 420px;
+      overflow-y: auto;
+      padding: 4px 20px 4px 4px;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      position: relative;
+    }
+    .timeline-list::-webkit-scrollbar { display: none; }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 96px 1fr;
+      gap: 28px;
+      padding: 26px 28px;
+      margin-bottom: 16px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.4); /* Чуть светлее карточки */
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255,255,255,0.5);
+      position: relative;
+      overflow: hidden;
+      transition: background 0.35s, border-color 0.35s, transform 0.35s, box-shadow 0.35s;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
+    }
+    .timeline-item:hover {
+      background: rgba(255, 255, 255, 0.5);
+      border-color: rgba(255, 255, 255, 0.6);
+      transform: translateX(3px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255,255,255,0.6);
+    }
+    .timeline-item:last-child { margin-bottom: 0; }
+
+    .tl-year {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      font-weight: 600;
+      color: #141414; /* Темный год */
+      letter-spacing: 0.02em;
+      line-height: 1;
+      padding-top: 4px;
+    }
+    .tl-body p {
+      font-size: 14.5px;
+      line-height: 1.8;
+      color: #2b2a27; /* Темный основной текст */
+      margin-bottom: 10px;
+    }
+    .tl-body p:last-child { margin-bottom: 0; }
+
+    /* ---------- жидкий ползунок ---------- */
+    .timeline-scrollbar {
+      position: relative;
+      width: 6px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.18);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      align-self: stretch;
+    }
+    .timeline-thumb {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.55) 100%);
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.9);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,1);
+      cursor: grab;
+      transition: background 0.25s, box-shadow 0.25s;
+      will-change: transform;
+    }
+    .timeline-thumb::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      border-radius: 8px 8px 0 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,1), transparent);
+    }
+    .timeline-thumb:hover {
+      background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.75) 100%);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,1);
+    }
+    .timeline-thumb:active { cursor: grabbing; }
+    .timeline-thumb::after {
+      content: '';
+      position: absolute;
+      inset: 6px 1px;
+      border-radius: 4px;
+      background: repeating-linear-gradient(
+        180deg,
+        rgba(255,255,255,0.5) 0px,
+        rgba(255,255,255,0.5) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    /* ---------- футер ---------- */
+    .footer { max-width: 1440px; margin: 40px auto 24px; padding: 0 32px; }
+    .footer-glass {
+      padding: 48px 48px 32px;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.45);
+      -webkit-backdrop-filter: blur(22px) saturate(160%);
+      backdrop-filter: blur(22px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      box-shadow: 0 12px 40px rgba(31, 38, 135, 0.09);
+      position: relative;
+      overflow: hidden;
+    }
+    .footer-glass::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.95), transparent);
+    }
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 40px;
+    }
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .footer-text { font-size: 13px; color: var(--muted); max-width: 300px; line-height: 1.75; }
+    .footer-links { display: flex; gap: 40px; }
+    .footer-links a {
+      font-size: 13px;
+      color: #4a4844;
+      text-decoration: none;
+      transition: color 0.2s;
+      cursor: pointer;
+    }
+    .footer-links a:hover { color: var(--ink); }
+    .footer-copy {
+      width: 100%;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.4);
+      font-size: 12px;
+      color: #8a8884;
+      letter-spacing: 0.04em;
+    }
+
+    /* ============================================================
+       МОБИЛЬНОЕ БУРГЕР-МЕНЮ
+       ============================================================ */
+    .burger-btn { display: none; }
+    .mobile-menu { display: none; }
+
+    @media (max-width: 480px) {
+      /* Прячем десктопное меню и корзину */
+      #desktopNav, #desktopCart { display: none !important; }
+
+      /* Показываем бургер */
+      .burger-btn {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 24px;
+        height: 16px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        z-index: 1001;
+      }
+      .burger-btn span {
+        display: block;
+        width: 100%;
+        height: 1.5px;
+        background-color: var(--ink);
+        transition: all 0.3s ease;
+        transform-origin: center;
+      }
+      .burger-btn.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+      .burger-btn.active span:nth-child(2) { opacity: 0; }
+      .burger-btn.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+      /* Всплывающее меню */
+      .mobile-menu {
+        display: flex;
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        width: 200px;
+        padding: 16px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.75);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
+        backdrop-filter: blur(24px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 12px 32px rgba(31, 38, 135, 0.12);
+        flex-direction: column;
+        gap: 8px;
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+        pointer-events: none;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        z-index: 1000;
+      }
+      .mobile-menu.active {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+      }
+
+      .mobile-nav { display: flex; flex-direction: column; }
+      .mobile-nav a {
+        font-size: 13px;
+        font-weight: 400;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink);
+        text-decoration: none;
+        padding: 12px 16px;
+        border-radius: 10px;
+        transition: background 0.2s;
+      }
+      .mobile-nav a.active,
+      .mobile-nav a:hover {
+        background: rgba(255, 255, 255, 0.8);
+      }
+      .mobile-cart {
+        font-size: 13px;
+        color: var(--ink);
+        padding: 12px 16px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.5);
+        margin-top: 4px;
+        text-align: center;
+        cursor: pointer;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+      }
+    }
+
+    /* ---------- общий адаптив ---------- */
+    @media (max-width: 1100px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+      .about-columns { grid-template-columns: 1fr; gap: 20px; }
+      .slide { flex: 0 0 calc(50% - 14px); }
+      .editorial-glass { grid-template-columns: 1fr; gap: 40px; padding: 56px 48px; }
+      .stats-inner { grid-template-columns: repeat(2, 1fr); }
+      .about-photo-timeline { background-attachment: scroll; }
+    }
+    @media (max-width: 768px) {
+      .header-inner { padding: 12px 18px; }
+      .nav { gap: 4px; }
+      .nav a { font-size: 10px; letter-spacing: 0.06em; padding: 8px 10px; }
+      .cart { display: none; }
+      .section { padding: 60px 20px; }
+      .grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+      .section-title { font-size: 32px; margin-bottom: 36px; }
+      .section-intro { margin-top: -16px; margin-bottom: 40px; font-size: 15px; }
+      .hero { padding: 130px 16px 60px; }
+      .hero-content { padding: 44px 24px; border-radius: 24px; }
+      .hero p { font-size: 16px; }
+      .manifesto { padding: 0 20px; }
+      .manifesto-inner { padding: 56px 28px; border-radius: 24px; }
+      .manifesto p { font-size: 15px; }
+      .catalog-head, .about-hero { padding-left: 20px; padding-right: 20px; }
+      .about-hero { padding-top: 130px; }
+      .about-hero-glass { padding: 40px 28px; border-radius: 22px; }
+      .about-hero .lead { font-size: 17px; }
+      .about-columns { padding: 32px 20px 40px; }
+      .editorial { padding: 40px 20px; }
+      .editorial-glass { padding: 40px 28px; border-radius: 24px; }
+      .editorial-left h2 { font-size: 30px; }
+      .story { padding: 0 16px; margin: 40px auto; }
+      .story-card { padding: 44px 0 40px; border-radius: 24px; }
+      .story-head { padding: 0 24px; margin-bottom: 32px; }
+      .story-head h2 { font-size: 28px; }
+      .slider-track { padding: 0 24px; gap: 16px; }
+      .slide { flex: 0 0 calc(85%); padding: 10px; }
+      .slider-dots { padding: 0 24px; margin-top: 32px; }
+      .stats { padding: 40px 20px; }
+      .stat-num { font-size: 40px; }
+      .stat { padding: 28px 16px; }
+      
+      /* Хроника на мобильных */
+      .about-photo-timeline { padding: 60px 16px; }
+      .timeline-glass { padding: 36px 20px 32px; border-radius: 24px; }
+      .timeline-glass h2 { font-size: 30px; }
+      .timeline-glass .timeline-intro { font-size: 14px; margin-bottom: 28px; }
+      .timeline-scroll-wrap { grid-template-columns: 1fr 5px; gap: 12px; }
+      .timeline-list { max-height: 400px; padding: 4px 12px 4px 2px; }
+      
+      /* Год над текстом на мобильных */
+      .timeline-item { 
+        grid-template-columns: 1fr; 
+        gap: 8px; 
+        padding: 20px 18px; 
+        border-radius: 16px; 
+      }
+      .tl-year { font-size: 24px; }
+      .tl-body p { font-size: 13.5px; line-height: 1.75; }
+      
+      .footer { padding: 0 16px; margin-bottom: 16px; }
+      .footer-glass { padding: 36px 28px 24px; border-radius: 22px; }
+      .footer-inner { flex-direction: column; }
+      .footer-links { flex-wrap: wrap; gap: 20px; }
+    }
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 38px; }
+      .btn { padding: 15px 32px; width: 100%; text-align: center; }
+      .logo { font-size: 20px; }
+      .stats-inner { grid-template-columns: 1fr; }
+      .about-photo-timeline { background-attachment: scroll; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ ШАПКА ============ -->
+  <header class="header">
+    <div class="header-inner">
+      <a class="logo" data-nav="home">VICTORIA</a>
+      
+      <!-- Обычное меню для больших экранов -->
+      <nav class="nav" id="desktopNav">
+        <a data-nav="home" class="active">Главная</a>
+        <a data-nav="catalog">Каталог</a>
+        <a data-nav="about">О бренде</a>
+      </nav>
+      <span class="cart" id="desktopCart">Корзина (0)</span>
+
+      <!-- Кнопка-бургер и мобильное меню -->
+      <button class="burger-btn" id="burgerBtn" aria-label="Меню">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="mobile-menu" id="mobileMenu">
+        <nav class="mobile-nav">
+          <a data-nav="home" class="active">Главная</a>
+          <a data-nav="catalog">Каталог</a>
+          <a data-nav="about">О бренде</a>
+        </nav>
+        <div class="mobile-cart">Корзина (0)</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ ГЛАВНАЯ ============ -->
+  <div class="page active" id="page-home">
+
+    <section class="hero">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+
+      <div class="hero-content">
+        <div class="hero-sub">Новая коллекция · Новосибирск · 2026</div>
+        <h1>Тихая роскошь<br>чистого хлопка</h1>
+        <p>Базовые футболки, в которых нет ничего лишнего. Только плотная ткань, выверенный силуэт и честный цвет — сшито в Новосибирске.</p>
+        <div class="btn-wrap">
+          <a class="btn" data-nav="catalog">Смотреть коллекцию</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="reveal">
+        <div class="section-label">Избранное</div>
+        <h2 class="section-title">Четыре оттенка сезона</h2>
+        <p class="section-intro">Мы не гонимся за количеством. В этом сезоне — четыре цвета, один безупречный крой и сотни часов примерок, чтобы вещь села на любого. Каждый оттенок подобран так, чтобы работать и в будни, и в выходные — без сезонных компромиссов.</p>
+      </div>
+      <div class="grid" id="home-grid"></div>
+    </section>
+
+    <section class="manifesto">
+      <div class="manifesto-inner reveal">
+        <h2>Мы верим, что вещь должна говорить сама за себя — без логотипов и украшений.</h2>
+        <p>Каждая футболка VICTORIA сшита из длинноволокнистого хлопка, который не теряет форму после десятков стирок. Мы работаем с небольшой фабрикой в Новосибирске и не выпускаем больше, чем можем проверить руками.</p>
+        <p>Наш бренд появился в 2026 году — и с первого дня мы делаем ровно одну вещь, но делаем её правильно. Нам неинтересно выпускать двадцать моделей в сезон. Нам интересно, чтобы одна футболка прожила с вами несколько лет и осталась такой же, как в день покупки.</p>
+      </div>
+    </section>
+
+    <section class="editorial">
+      <div class="editorial-glass reveal">
+        <div class="editorial-left">
+          <h2>Почему мы не делаем «модную» одежду</h2>
+          <p class="lead">Мы не следуем за трендами, потому что тренды проходят. Мы следуем за качеством — а оно не зависит от сезона.</p>
+          <p class="small">Базовая футболка — это вещь, которая должна работать каждый день: под пиджак, под свитер, сама по себе. Если она хорошо скроена и сшита из правильной ткани, ей не нужен ни принт, ни логотип, ни «капсульная коллекция» с громким названием.</p>
+        </div>
+        <div class="editorial-right">
+          <p>Мы начинали в 2026 году с одной простой мысли: в Новосибирске можно делать вещи не хуже, чем в Милане или Токио — если не экономить на ткани и не торопиться. Первая партия была маленькой: 120 футболок, сшитых на местной фабрике. Мы продали её за три недели, и это стало лучшим подтверждением, что мы всё делаем правильно.</p>
+          <div class="divider"></div>
+          <p>С тех пор мы выросли — но не вширь, а вглубь. Вместо расширения ассортимента мы оттачиваем три силуэта и четыре цвета. Вместо маркетинговых кампаний — проверяем каждую партию вручную. Вместо сезонных распродаж — держим цену, потому что она честная.</p>
+          <p>Мы верим, что хорошая вещь — это не та, что бросается в глаза, а та, о которой вы забываете в течение дня, потому что она нигде не жмёт, не тянет и не напоминает о себе. Именно этого мы добиваемся от каждой футболки VICTORIA.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats">
+      <div class="stats-inner">
+        <div class="stat reveal">
+          <div class="stat-num">2026</div>
+          <div class="stat-label">Год основания бренда<br>в Новосибирске</div>
+        </div>
+        <div class="stat reveal">
+          <div class="stat-num">240</div>
+          <div class="stat-label">Плотность ткани<br>в г/м²</div>
+        </div>
+        <div class="stat reveal">
+          <div class="stat-num">300</div>
+          <div class="stat-label">Максимум штук<br>в одной партии</div>
+        </div>
+        <div class="stat reveal">
+          <div class="stat-num">4</div>
+          <div class="stat-label">Оттенка в постоянной<br>коллекции</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="story">
+      <div class="story-card reveal">
+        <div class="story-head">
+          <div>
+            <div class="section-label">За кулисами</div>
+            <h2>Четыре истории о том, как рождается одна футболка</h2>
+          </div>
+          <div class="slider-controls">
+            <button class="slider-btn" id="prevBtn" aria-label="Назад">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="slider-btn" id="nextBtn" aria-label="Вперед">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="slider-track-wrap" id="sliderWrap">
+          <div class="slider-track" id="sliderTrack"></div>
+        </div>
+
+        <div class="slider-dots" id="sliderDots"></div>
+      </div>
+    </section>
+
+    <section class="editorial">
+      <div class="editorial-glass reveal">
+        <div class="editorial-left">
+          <h2>Что значит «проверить руками»</h2>
+          <p class="lead">Каждая партия проходит три этапа контроля — и мы не пропускаем ни один, даже если это задерживает поставку.</p>
+          <p class="small">Сначала проверяем ткань на входе: плотность, состав, отсутствие дефектов плетения. Затем — пошив: швы, посадку, симметрию. И наконец — контрольный осмотр готовой партии: цвет, усадка после первой стирки, поведение ткани в носке.</p>
+        </div>
+        <div class="editorial-right">
+          <p>Если партия не проходит хотя бы один из этапов, мы её не отгружаем. Это случается нечасто — но случается. И каждый раз это неприятный разговор с фабрикой, потому что мы теряем время и деньги. Но по-другому мы не умеем: лучше задержать поставку на две недели, чем отдать вещь, за которую потом будет стыдно.</p>
+          <div class="divider"></div>
+          <p>Именно поэтому у нас нет «быстрой моды» и распродаж в конце сезона. Вещь, которая не распродаётся, — это не провал, а просто вещь, которую купят позже. А вещь, которую распродают со скидкой 70%, — это, скорее всего, вещь, на которой сэкономили на этапе производства.</p>
+          <p>Мы предпочитаем держать цену и держать качество. Это не самая быстрая стратегия, но самая честная — и по отношению к вам, и по отношению к людям, которые шьют наши футболки.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ============ КАТАЛОГ ============ -->
+  <div class="page" id="page-catalog">
+    <div class="catalog-head">
+      <h1>Каталог</h1>
+      <p>Полная коллекция базовых футболок. Четыре цвета, выверенный крой — и ничего лишнего. Все модели сшиты в Новосибирске из длинноволокнистого хлопка плотностью 240 г/м².</p>
+    </div>
+    <section class="section" style="padding-top: 40px;">
+      <div class="grid" id="catalog-grid"></div>
+    </section>
+
+    <section class="editorial">
+      <div class="editorial-glass reveal">
+        <div class="editorial-left">
+          <h2>Как выбрать свой крой</h2>
+          <p class="lead">Три силуэта — не три разных характера, а три разных посадки. Выбирайте по тому, как вы привыкли носить вещи, а не по размеру на этикетке.</p>
+          <p class="small">Classic — универсальный прямой крой, который садится почти на всех. Relaxed — свободный силуэт со спущенным плечом, для тех, кто предпочитает воздух между телом и тканью. Slim — прилегающий крой из эластичного хлопка, для тех, кто любит более собранный силуэт.</p>
+        </div>
+        <div class="editorial-right">
+          <p>Если вы сомневаетесь — берите Classic. Это наш самый продаваемый крой, и он идёт почти всем: не слишком облегает, не висит мешком, хорошо работает и под пиджаком, и с джинсами, и с шортами. Для большинства людей это идеальная точка отсчёта.</p>
+          <div class="divider"></div>
+          <p>Размерная сетка у нас стандартная, но если вы между размерами — берите меньший, если хотите более собранную посадку, и больший, если предпочитаете свободу. Каждая футболка даёт усадку не более 2% после первой стирки — это мы проверяем на каждой партии.</p>
+          <p>Если вы в Новосибирске — загляните в наш шоурум в центре города. Там можно потрогать все четыре цвета вживую и примерить все три кроя. Иногда вещь, которая на экране кажется идеальной, на теле садится иначе — и наоборот. Живая примерка снимает все вопросы.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ О БРЕНДЕ ============ -->
+  <div class="page" id="page-about">
+    <div class="about-hero">
+      <div class="about-hero-glass reveal">
+        <h1>О бренде</h1>
+        <p class="lead">VICTORIA — это небольшая мастерская, основанная в Новосибирске в 2026 году. Мы делаем один продукт — базовую футболку — и доводим его до совершенства.</p>
+        <p>Без сезонных коллекций, без маркетингового шума и без вещей, которые стыдно носить на второй год. Мы верим, что одежда должна быть простой, честной и удобной — а всё остальное приложится.</p>
+        <p>Наш подход прост: одна ткань, три кроя, четыре цвета. И постоянная работа над каждым из этих элементов — потому что совершенство не достигается, а поддерживается.</p>
+      </div>
+    </div>
+
+    <div class="about-columns">
+      <div class="about-col reveal">
+        <h3>Материал</h3>
+        <p>Длинноволокнистый хлопок, плотность 240 г/м². Ткань проходит двойную обработку, чтобы оставаться мягкой и не пилинговаться. Мы не экономим на волокне — это видно уже после первой стирки.</p>
+        <p>Каждая партия ткани проверяется на входе: плотность, состав, отсутствие дефектов плетения. Если ткань не проходит проверку — мы её не берём, даже если поставщик предлагает скидку.</p>
+      </div>
+      <div class="about-col reveal">
+        <h3>Крой</h3>
+        <p>Три силуэта — Classic, Relaxed и Slim. Каждый отработан на живых людях, а не на манекенах. Посадка проверена в носке — в метро, в офисе и на прогулке.</p>
+        <p>Футболка не должна напоминать о себе в течение дня: не тянуть в плечах, не задираться на талии, не собираться в складки под мышками. Именно этого мы добиваемся от каждой модели.</p>
+      </div>
+      <div class="about-col reveal">
+        <h3>Производство</h3>
+        <p>Шьём на небольшой фабрике в Новосибирске. Каждая партия — не больше 300 штук. Мы знаем каждого, кто причастен к вещи, и платим людям достойно.</p>
+        <p>Для нас это не маркетинг, а базовое условие работы. Если вы не готовы платить людям за их труд — вы не готовы делать хорошую одежду. Это простая мысль, но её часто забывают.</p>
+      </div>
+    </div>
+
+    <!-- ХРОНИКА ПОВЕРХ ФОТО: liquid glass + список с ползунком -->
+    <div class="about-photo-timeline">
+      <div class="timeline-glass reveal">
+        <h2>Небольшая хроника</h2>
+        <p class="timeline-intro">Четыре года — четыре шага. Прокрутите список: каждый этап был важен, и мы не пропустили ни один.</p>
+
+        <div class="timeline-scroll-wrap">
+          <ul class="timeline-list" id="timelineList">
+            <li class="timeline-item">
+              <div class="tl-year">2026</div>
+              <div class="tl-body">
+                <p>Основание бренда в Новосибирске. Первая партия — 120 футболок, сшитых на местной фабрике. Мы продали её за три недели и поняли, что двигаемся в правильном направлении.</p>
+                <p>Тогда у нас было два кроя и два цвета. Идея была простой: сделать базовую футболку, которую не стыдно надеть ни в офис, ни на прогулку. Никаких принтов, никаких логотипов — только ткань и посадка.</p>
+              </div>
+            </li>
+            <li class="timeline-item">
+              <div class="tl-year">2027</div>
+              <div class="tl-body">
+                <p>Появление третьего кроя — Slim. До этого было только два силуэта, но клиенты просили более прилегающий вариант. Мы перешили его семь раз, прежде чем остались довольны.</p>
+                <p>Именно тогда мы поняли, что крой — это не про размер, а про то, как вещь садится на конкретного человека. Один и тот же размер может сидеть по-разному в зависимости от плеч, роста и привычек. Поэтому мы не гонимся за «универсальностью» — мы делаем три честных варианта.</p>
+              </div>
+            </li>
+            <li class="timeline-item">
+              <div class="tl-year">2028</div>
+              <div class="tl-body">
+                <p>Открытие первой студии-шоурума в центре Новосибирска. Небольшое пространство на 40 квадратов, где можно потрогать ткань и примерить все четыре цвета вживую.</p>
+                <p>Шоурум — это не про продажи. Это про разговор. Мы хотим, чтобы люди могли прийти, посмотреть, потрогать и уйти — даже если ничего не купят. Иногда лучший способ понять, что тебе подходит, — это просто попробовать.</p>
+              </div>
+            </li>
+            <li class="timeline-item">
+              <div class="tl-year">2029</div>
+              <div class="tl-body">
+                <p>Полный переход на длинноволокнистый хлопок и собственная система контроля качества. Каждая партия проверяется вручную — по посадке, швам и цвету.</p>
+                <p>С этого момента мы окончательно отказались от «быстрого» производства. Партия, которая не проходит проверку, не отгружается — даже если это задерживает поставку. Мы лучше задержим на две недели, чем отдадим вещь, за которую потом будет стыдно.</p>
+              </div>
+            </li>
+          </ul>
+
+          <div class="timeline-scrollbar" id="timelineScrollbar" aria-hidden="true">
+            <div class="timeline-thumb" id="timelineThumb"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ФУТЕР ============ -->
+  <footer class="footer">
+    <div class="footer-glass">
+      <div class="footer-inner">
+        <div>
+          <div class="footer-brand">VICTORIA</div>
+          <div class="footer-text">Тихая роскошь в простых вещах. Белый хлопок, чистые линии. Новосибирск, с 2026 года.</div>
+        </div>
+        <div class="footer-links">
+          <a data-nav="catalog">Каталог</a>
+          <a data-nav="about">О бренде</a>
+          <a data-nav="home">Главная</a>
+        </div>
+      </div>
+      <div class="footer-copy">© 2026 VICTORIA. Все права защищены.</div>
+    </div>
+  </footer>
+
+  <script>
+    /* ---------- товары ---------- */
+    const products = [
+      {
+        name: 'Cobalt',
+        desc: 'Плотный хлопок · Прямой крой',
+        price: '4 900 ₽',
+        img: 'https://avatars.mds.yandex.net/get-mpic/5252116/2a00000190d4b62fec0773e72a2d9d233a70/orig',
+        swatch: '#2c4a72'
+      },
+      {
+        name: 'Onyx',
+        desc: 'Свободный силуэт · Спущенное плечо',
+        price: '5 400 ₽',
+        img: 'https://ir.ozone.ru/s3/multimedia-1-y/9259526734.jpg',
+        swatch: '#1a1a1a'
+      },
+      {
+        name: 'Scarlet',
+        desc: 'Эластичный хлопок · Прилегающий крой',
+        price: '4 600 ₽',
+        img: 'https://ir.ozone.ru/s3/multimedia-1-j/7069501243.jpg',
+        swatch: '#b03a2e'
+      },
+      {
+        name: 'Azure',
+        desc: 'Плотный хлопок · Классический крой',
+        price: '4 900 ₽',
+        img: 'https://basket-27.wbbasket.ru/vol4997/part499725/499725926/images/big/1.webp',
+        swatch: '#7ba7c9'
+      }
+    ];
+
+    function renderCards(container, items) {
+      container.innerHTML = items.map(p => `
+        <article class="card reveal">
+          <div class="card-image">
+            <span class="swatch" style="background:${p.swatch}"></span>
+            <img src="${p.img}" alt="Футболка VICTORIA ${p.name}" loading="lazy">
+          </div>
+          <div class="card-body">
+            <div class="card-name">${p.name}</div>
+            <div class="card-desc">${p.desc}</div>
+            <div class="card-price">${p.price}</div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    renderCards(document.getElementById('home-grid'), products);
+    renderCards(document.getElementById('catalog-grid'), products);
+
+    /* ---------- SPA-навигация ---------- */
+    const pages = {
+      home: document.getElementById('page-home'),
+      catalog: document.getElementById('page-catalog'),
+      about: document.getElementById('page-about')
+    };
+    const navLinks = document.querySelectorAll('[data-nav]');
+
+    function navigate(target) {
+      Object.values(pages).forEach(p => p.classList.remove('active'));
+      if (pages[target]) {
+        pages[target].classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
+      
+      // Обновляем активный класс для всех меню
+      document.querySelectorAll('[data-nav]').forEach(a => {
+        a.classList.toggle('active', a.dataset.nav === target);
+      });
+      
+      setTimeout(observeReveals, 60);
+      setTimeout(() => {
+        if (target === 'home') setPosition(current, false);
+        if (target === 'about') updateTimelineScrollbar();
+      }, 80);
+    }
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigate(link.dataset.nav);
+      });
+    });
+
+    /* ---------- Мобильное меню (бургер) ---------- */
+    const burgerBtn = document.getElementById('burgerBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    burgerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      burgerBtn.classList.toggle('active');
+      mobileMenu.classList.toggle('active');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!mobileMenu.contains(e.target) && !burgerBtn.contains(e.target)) {
+        burgerBtn.classList.remove('active');
+        mobileMenu.classList.remove('active');
+      }
+    });
+
+    /* ---------- reveal ---------- */
+    let revealObserver;
+
+    function observeReveals() {
+      if (revealObserver) revealObserver.disconnect();
+
+      revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const delay = entry.target.dataset.delay || 0;
+            setTimeout(() => {
+              entry.target.classList.add('visible');
+            }, delay);
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.12,
+        rootMargin: '0px 0px -40px 0px'
+      });
+
+      document.querySelectorAll('.reveal:not(.visible)').forEach((el) => {
+        const parent = el.parentElement;
+        const siblings = parent ? [...parent.querySelectorAll(':scope > .reveal')] : [];
+        const idx = siblings.indexOf(el);
+        el.dataset.delay = idx >= 0 ? idx * 90 : 0;
+        revealObserver.observe(el);
+      });
+    }
+
+    /* ================================================================
+       СЛАЙДЕР — бесконечная карусель
+       ================================================================ */
+    const slideData = [
+      {
+        num: '01 / Ткань',
+        title: 'Хлопок, который дышит',
+        text: 'Мы закупаем длинноволокнистый хлопок у турецких поставщиков и проверяем каждую партию на ощупь. Ткань плотностью 240 г/м² не просвечивает, держит форму и становится мягче с каждой стиркой — без пилинга и катышков.',
+        img: 'https://img.magnific.com/free-photo/silk-fabric_1268-25086.jpg?semt=ais_hybrid&w=740'
+      },
+      {
+        num: '02 / Крой',
+        title: 'Силуэт, который садится',
+        text: 'Три кроя — Classic, Relaxed и Slim — отработаны на живых людях разного телосложения, а не на манекенах. Мы восемь раз перешивали линию плеча, пока не добились того, чтобы футболка не тянула и не висела мешком.',
+        img: 'https://i.pinimg.com/originals/3b/3f/72/3b3f72880bcdd3f62d5554ca23c82426.jpg'
+      },
+      {
+        num: '03 / Производство',
+        title: 'Новосибирск, небольшая фабрика',
+        text: 'Мы шьём на одной фабрике в Новосибирске, где работают 14 человек. Каждая партия — не больше 300 штук. Мы знаем в лицо каждого, кто причастен к вещи, и платим выше среднего по региону.',
+        img: 'https://art-dtex.ru/upload/medialibrary/1a7/1a7abb937a5bc074cecebaf563523493.jpeg'
+      },
+      {
+        num: '04 / Цвет',
+        title: 'Палитра без лишнего',
+        text: 'Четыре оттенка — кобальт, оникс, алый и лазурный. Мы не выпускаем сезонные «хиты» и не гонимся за трендами. Цвета остаются в коллекции до тех пор, пока ткань и краска не перестанут соответствовать нашему стандарту.',
+        img: 'https://avatars.mds.yandex.net/i?id=47571b74b4470165aabf59668f2807c1_l-4842027-images-thumbs&n=13'
+      }
+    ];
+
+    const track = document.getElementById('sliderTrack');
+    const dotsWrap = document.getElementById('sliderDots');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const wrap = document.getElementById('sliderWrap');
+
+    const REAL_COUNT = slideData.length;
+
+    function slideHTML(s) {
+      return `
+        <article class="slide">
+          <div class="slide-image">
+            <img src="${s.img}" alt="${s.title}" loading="lazy">
+          </div>
+          <div class="slide-content">
+            <div class="slide-num">${s.num}</div>
+            <h3>${s.title}</h3>
+            <p>${s.text}</p>
+          </div>
+        </article>
+      `;
+    }
+
+    let perView = getPerView();
+    let clonesBefore = 0;
+    let clonesAfter = 0;
+    let current = 0;
+
+    function getPerView() {
+      if (window.innerWidth <= 768) return 1;
+      if (window.innerWidth <= 1100) return 2;
+      return 3;
+    }
+
+    function buildTrack() {
+      clonesBefore = perView;
+      clonesAfter = perView;
+
+      const before = slideData.slice(-clonesBefore).map(slideHTML).join('');
+      const original = slideData.map(slideHTML).join('');
+      const after = slideData.slice(0, clonesAfter).map(slideHTML).join('');
+
+      track.innerHTML = before + original + after;
+      track.classList.add('no-transition');
+      requestAnimationFrame(() => {
+        setPosition(0, false);
+        track.classList.remove('no-transition');
+      });
+    }
+
+    function physicalIndex(realIdx) {
+      return clonesBefore + realIdx;
+    }
+
+    function getSlideWidth() {
+      const first = track.children[0];
+      if (!first) return 0;
+      const style = getComputedStyle(track);
+      const gap = parseFloat(style.gap) || 28;
+      return first.getBoundingClientRect().width + gap;
+    }
+
+    function setPosition(realIdx, animate = true) {
+      const w = getSlideWidth();
+      if (!w) return;
+      const offset = physicalIndex(realIdx) * w;
+      if (!animate) {
+        track.classList.add('no-transition');
+      } else {
+        track.classList.remove('no-transition');
+      }
+      track.style.transform = `translateX(-${offset}px)`;
+      if (!animate) {
+        void track.offsetWidth;
+        track.classList.remove('no-transition');
+      }
+    }
+
+    function buildDots() {
+      dotsWrap.innerHTML = '';
+      for (let i = 0; i < REAL_COUNT; i++) {
+        const b = document.createElement('button');
+        b.className = 'dot' + (i === current ? ' active' : '');
+        b.setAttribute('aria-label', 'Слайд ' + (i + 1));
+        b.addEventListener('click', () => goTo(i, true));
+        dotsWrap.appendChild(b);
+      }
+    }
+
+    function updateDots() {
+      [...dotsWrap.children].forEach((d, i) => {
+        d.classList.toggle('active', i === current);
+      });
+    }
+
+    function goTo(realIdx, animate = true) {
+      current = ((realIdx % REAL_COUNT) + REAL_COUNT) % REAL_COUNT;
+      setPosition(current, animate);
+      updateDots();
+    }
+
+    track.addEventListener('transitionend', (e) => {
+      if (e.propertyName !== 'transform') return;
+      const w = getSlideWidth();
+      if (!w) return;
+      const m = new DOMMatrixReadOnly(getComputedStyle(track).transform);
+      const offset = -m.m41;
+      const idx = Math.round(offset / w);
+
+      if (idx < clonesBefore) {
+        const realIdx = idx - clonesBefore + REAL_COUNT;
+        const targetReal = ((realIdx % REAL_COUNT) + REAL_COUNT) % REAL_COUNT;
+        setPosition(targetReal, false);
+      } else if (idx >= clonesBefore + REAL_COUNT) {
+        const realIdx = idx - clonesBefore - REAL_COUNT;
+        const targetReal = ((realIdx % REAL_COUNT) + REAL_COUNT) % REAL_COUNT;
+        setPosition(targetReal, false);
+      }
+    });
+
+    function next() { goTo(current + 1, true); }
+    function prev() { goTo(current - 1, true); }
+
+    prevBtn.addEventListener('click', next); // Исправлено на next
+    nextBtn.addEventListener('click', next);
+
+    /* ---------- drag / swipe ---------- */
+    let isDown = false, startX = 0, startTransform = 0;
+
+    function onDown(e) {
+      isDown = true;
+      startX = e.clientX;
+      const style = getComputedStyle(track);
+      const m = new DOMMatrixReadOnly(style.transform);
+      startTransform = m.m41;
+      track.classList.add('no-transition');
+      wrap.setPointerCapture(e.pointerId);
+    }
+    function onMove(e) {
+      if (!isDown) return;
+      const dx = e.clientX - startX;
+      track.style.transform = `translateX(${startTransform + dx}px)`;
+    }
+    function onUp(e) {
+      if (!isDown) return;
+      isDown = false;
+      const dx = e.clientX - startX;
+      track.classList.remove('no-transition');
+      if (dx < -50) next();
+      else if (dx > 50) prev();
+      else goTo(current, true);
+    }
+
+    wrap.addEventListener('pointerdown', onDown);
+    wrap.addEventListener('pointermove', onMove);
+    wrap.addEventListener('pointerup', onUp);
+    wrap.addEventListener('pointercancel', onUp);
+
+    /* ================================================================
+       ХРОНИКА — прокручиваемый список с жидким ползунком
+       ================================================================ */
+    const tlList = document.getElementById('timelineList');
+    const tlBar = document.getElementById('timelineScrollbar');
+    const tlThumb = document.getElementById('timelineThumb');
+
+    function updateTimelineScrollbar() {
+      if (!tlList || !tlBar || !tlThumb) return;
+
+      const scrollable = tlList.scrollHeight - tlList.clientHeight;
+      const ratio = tlList.clientHeight / tlList.scrollHeight;
+
+      const minThumb = 40;
+      const thumbHeight = Math.max(minThumb, Math.round(tlBar.clientHeight * ratio));
+      tlThumb.style.height = thumbHeight + 'px';
+
+      const maxScroll = Math.max(1, scrollable);
+      const trackSpace = tlBar.clientHeight - thumbHeight;
+      const scrollProgress = tlList.scrollTop / maxScroll;
+      const thumbTop = trackSpace * scrollProgress;
+
+      tlThumb.style.transform = `translateY(${thumbTop}px)`;
+    }
+
+    tlList.addEventListener('scroll', updateTimelineScrollbar);
+
+    window.addEventListener('resize', () => {
+      updateTimelineScrollbar();
+    });
+
+    let dragging = false;
+    let dragStartY = 0;
+    let dragStartScroll = 0;
+
+    function thumbPointerDown(e) {
+      dragging = true;
+      dragStartY = e.clientY;
+      dragStartScroll = tlList.scrollTop;
+      tlThumb.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    }
+    function thumbPointerMove(e) {
+      if (!dragging) return;
+      const thumbHeight = tlThumb.getBoundingClientRect().height;
+      const trackSpace = tlBar.clientHeight - thumbHeight;
+      if (trackSpace <= 0) return;
+      const dy = e.clientY - dragStartY;
+      const maxScroll = Math.max(1, tlList.scrollHeight - tlList.clientHeight);
+      const scrollDelta = (dy / trackSpace) * maxScroll;
+      tlList.scrollTop = dragStartScroll + scrollDelta;
+    }
+    function thumbPointerUp(e) {
+      if (!dragging) return;
+      dragging = false;
+      try { tlThumb.releasePointerCapture(e.pointerId); } catch(err) {}
+    }
+
+    tlThumb.addEventListener('pointerdown', thumbPointerDown);
+    tlThumb.addEventListener('pointermove', thumbPointerMove);
+    tlThumb.addEventListener('pointerup', thumbPointerUp);
+    tlThumb.addEventListener('pointercancel', thumbPointerUp);
+
+    tlBar.addEventListener('pointerdown', (e) => {
+      if (e.target === tlThumb) return;
+      const rect = tlBar.getBoundingClientRect();
+      const y = e.clientY - rect.top;
+      const thumbHeight = tlThumb.getBoundingClientRect().height;
+      const trackSpace = tlBar.clientHeight - thumbHeight;
+      if (trackSpace <= 0) return;
+      const clickProgress = Math.max(0, Math.min(1, (y - thumbHeight / 2) / trackSpace));
+      const maxScroll = Math.max(1, tlList.scrollHeight - tlList.clientHeight);
+      tlList.scrollTop = clickProgress * maxScroll;
+    });
+
+    /* ---------- init ---------- */
+    document.addEventListener('DOMContentLoaded', () => {
+      observeReveals();
+      buildTrack();
+      buildDots();
+      requestAnimationFrame(() => {
+        setPosition(current, false);
+        updateTimelineScrollbar();
+      });
+    });
+
+    window.addEventListener('load', () => {
+      setPosition(current, false);
+      updateTimelineScrollbar();
+      setTimeout(updateTimelineScrollbar, 300);
+    });
+  </script>
+
+</body>
+</html>
